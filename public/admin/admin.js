@@ -118,6 +118,7 @@ async function loadSMTP() {
       document.getElementById('smtpUser').value = data.smtp.user || '';
       document.getElementById('smtpFrom').value = data.smtp.from || '';
       document.getElementById('smtpTo').value = data.smtp.to || '';
+      document.getElementById('smtpCc').value = data.smtp.cc || '';
     }
   } catch (e) {}
 }
@@ -130,7 +131,8 @@ async function saveSMTP() {
     user: document.getElementById('smtpUser').value,
     pass: document.getElementById('smtpPass').value,
     from: document.getElementById('smtpFrom').value,
-    to: document.getElementById('smtpTo').value
+    to: document.getElementById('smtpTo').value,
+    cc: document.getElementById('smtpCc').value
   };
   const res = await fetch('/api/admin/smtp', { method: 'POST', headers: authHeader, body: JSON.stringify(body) });
   const data = await res.json();
