@@ -57,25 +57,21 @@
 </head>
 <body>
   <!-- ===== PRELOADER ===== -->
-  <div id="preloader" style="position: fixed; inset: 0; background: #08090d; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s ease;">
-    <div style="text-align: center;">
-      <img src="images/logo-transparent.png" alt="Sobha" style="width: 150px; height: auto; filter: brightness(0) invert(1) sepia(1) saturate(1.8) hue-rotate(15deg) contrast(1.2); animation: pulseLogo 1.5s infinite ease-in-out;">
-      <h3 style="color: #c9a96e; font-family: 'Montserrat', sans-serif; font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; margin-top: 15px; font-weight: 500;">Sobha One World</h3>
-    </div>
+  <div id="preloader" style="position: fixed; inset: 0; background: #08090d; display: flex; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s ease;">
+    <img id="preloader-logo" src="images/logo-transparent.png" alt="Sobha" style="width: 150px; height: auto; opacity: 0; filter: brightness(0) invert(1) sepia(1) saturate(1.8) hue-rotate(15deg) contrast(1.2); transition: opacity 0.4s ease;">
   </div>
-  <style>
-    @keyframes pulseLogo {
-      0% { transform: scale(0.92); opacity: 0.4; }
-      50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 8px rgba(201, 169, 110, 0.4)); }
-      100% { transform: scale(0.92); opacity: 0.4; }
-    }
-  </style>
   <script>
     (function() {
+      // Fade in the logo smoothly after a tiny delay so the CSS filter applies first (prevents flicker)
+      setTimeout(() => {
+        const logo = document.getElementById('preloader-logo');
+        if (logo) logo.style.opacity = '1';
+      }, 100);
+
       const startTime = Date.now();
       function hideLoader() {
         const elapsed = Date.now() - startTime;
-        const remaining = Math.max(1200 - elapsed, 0); // Guarantee minimum 1.2s pulse
+        const remaining = Math.max(1200 - elapsed, 0); // Keep loader visible for at least 1.2s
         setTimeout(() => {
           const loader = document.getElementById('preloader');
           if (loader) {
@@ -85,13 +81,12 @@
           }
         }, remaining);
       }
-      // Hide loader when page is completely loaded (including hero image)
+      // Hide loader when page is completely loaded
       if (document.readyState === 'complete') {
         hideLoader();
       } else {
         window.addEventListener('load', hideLoader);
-        // Fallback: hide loader anyway after 4 seconds if connection is slow
-        setTimeout(hideLoader, 4000);
+        setTimeout(hideLoader, 4000); // Fallback
       }
     })();
   </script>
