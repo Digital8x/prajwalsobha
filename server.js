@@ -129,8 +129,13 @@ async function sendEmailNotification(lead) {
   }
   try {
     const t = nodemailer.createTransport({ host: s.host, port: parseInt(s.port), secure: s.secure === 'true', auth: { user: s.user, pass: s.pass } });
-    console.log(`[SMTP] Sending lead notification for ${lead.name} to ${s.to}`);
-    await t.sendMail({ from: s.from || s.user, to: s.to, subject: `prajwal Lead: sobha-theoneworld.com - ${lead.name}`,
+    
+    // Primary recipient gets FULL info
+    console.log(`[SMTP] Sending full lead notification to primary: ${s.to}`);
+    await t.sendMail({
+      from: s.from || s.user,
+      to: s.to,
+      subject: `prajwal Lead: sobha-theoneworld.com - ${lead.name}`,
       html: `<div style="font-family:Arial;max-width:600px;margin:0 auto;background:#111;padding:24px;border-radius:12px;border:1px solid #c9a96e;">
         <h2 style="color:#c9a96e;margin-top:0;">🏠 New Lead - Sobha One World (sobha-theoneworld.com)</h2>
         <table style="width:100%;border-collapse:collapse;color:#eee;">
@@ -143,8 +148,28 @@ async function sendEmailNotification(lead) {
           <tr><td style="padding:10px;border-bottom:1px solid #333;font-weight:bold;color:#c9a96e;">Browser</td><td style="padding:10px;border-bottom:1px solid #333;">${lead.browser}</td></tr>
           <tr><td style="padding:10px;border-bottom:1px solid #333;font-weight:bold;color:#c9a96e;">IP Address</td><td style="padding:10px;border-bottom:1px solid #333;">${lead.ip}</td></tr>
           <tr><td style="padding:10px;font-weight:bold;color:#c9a96e;">Referrer</td><td style="padding:10px;">${lead.referrer || 'Direct'}</td></tr>
-        </table></div>` });
-    console.log(`[SMTP] Success: Notification sent for ${lead.name}`);
+        </table></div>`
+    });
+
+    // CC recipient gets clean SIMPLIFIED info (Name, Phone, Email only)
+    const ccEmail = await dbGet('smtp_cc') || process.env.SMTP_CC || '';
+    if (ccEmail) {
+      console.log(`[SMTP] Sending simplified CC lead notification to: ${ccEmail}`);
+      await t.sendMail({
+        from: s.from || s.user,
+        to: ccEmail,
+        subject: `prajwal Lead: sobha-theoneworld.com - ${lead.name}`,
+        html: `<div style="font-family:Arial;max-width:600px;margin:0 auto;background:#111;padding:24px;border-radius:12px;border:1px solid #c9a96e;">
+          <h2 style="color:#c9a96e;margin-top:0;">🏠 New Lead - Sobha One World</h2>
+          <table style="width:100%;border-collapse:collapse;color:#eee;">
+            <tr><td style="padding:10px;border-bottom:1px solid #333;font-weight:bold;color:#c9a96e;">Name</td><td style="padding:10px;border-bottom:1px solid #333;">${lead.name}</td></tr>
+            <tr><td style="padding:10px;border-bottom:1px solid #333;font-weight:bold;color:#c9a96e;">Phone</td><td style="padding:10px;border-bottom:1px solid #333;">${lead.phone}</td></tr>
+            <tr><td style="padding:10px;font-weight:bold;color:#c9a96e;">Email</td><td style="padding:10px;">${lead.email || 'N/A'}</td></tr>
+          </table></div>`
+      });
+    }
+
+    console.log(`[SMTP] Success: Notifications sent for ${lead.name}`);
   } catch (err) { console.error('[SMTP] Error:', err.message); }
 }
 
@@ -271,11 +296,12 @@ app.post('/api/admin/leads/bulk-delete', adminAuth, async (req, res) => {
 
 app.get('/api/admin/smtp', adminAuth, async (req, res) => {
   const s = await getSmtpSettings();
-  res.json({ success: true, smtp: { host: s.host, port: s.port, secure: s.secure, user: s.user, from: s.from, to: s.to } });
+  const cc = await dbGet('smtp_cc') || process.env.SMTP_CC || '';
+  res.json({ success: true, smtp: { host: s.host, port: s.port, secure: s.secure, user: s.user, from: s.from, to: s.to, cc } });
 });
 
 app.post('/api/admin/smtp', adminAuth, async (req, res) => {
-  const { host, port, secure, user, pass, from, to } = req.body;
+  const { host, port, secure, user, pass, from, to, cc } = req.body;
   await dbSet('smtp_host', host);
   await dbSet('smtp_port', port || '587');
   await dbSet('smtp_secure', secure || 'false');
@@ -283,6 +309,7 @@ app.post('/api/admin/smtp', adminAuth, async (req, res) => {
   if (pass) await dbSet('smtp_pass', pass);
   await dbSet('smtp_from', from);
   await dbSet('smtp_to', to);
+  await dbSet('smtp_cc', cc || '');
   res.json({ success: true, message: 'SMTP settings saved.' });
 });
 
