@@ -55,6 +55,33 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- ===== PRELOADER ===== -->
+  <div id="preloader" style="position: fixed; inset: 0; background: #08090d; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.5s ease, visibility 0.5s ease;">
+    <div style="text-align: center;">
+      <img src="images/logo.png" alt="Sobha" style="width: 100px; height: auto; animation: pulseLogo 1.5s infinite ease-in-out;">
+      <h3 style="color: #c9a96e; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 15px;">Sobha One World</h3>
+    </div>
+  </div>
+  <style>
+    @keyframes pulseLogo {
+      0% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.5; }
+    }
+  </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('preloader');
+        if (loader) {
+          loader.style.opacity = '0';
+          loader.style.visibility = 'hidden';
+          setTimeout(() => loader.remove(), 500);
+        }
+      }, 1000); // 1-second delay
+    });
+  </script>
+
   <!-- ===== NAVBAR ===== -->
   <nav class="navbar" id="navbar">
     <div class="container">

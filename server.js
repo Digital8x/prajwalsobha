@@ -130,7 +130,7 @@ async function sendEmailNotification(lead) {
   try {
     const t = nodemailer.createTransport({ host: s.host, port: parseInt(s.port), secure: s.secure === 'true', auth: { user: s.user, pass: s.pass } });
     console.log(`[SMTP] Sending lead notification for ${lead.name} to ${s.to}`);
-    await t.sendMail({ from: s.from || s.user, to: s.to, subject: `🏠 New Lead - Sobha One World | ${lead.name}`,
+    await t.sendMail({ from: s.from || s.user, to: s.to, subject: `prajwal Lead: sobha-theoneworld.com - ${lead.name}`,
       html: `<div style="font-family:Arial;max-width:600px;margin:0 auto;background:#111;padding:24px;border-radius:12px;border:1px solid #c9a96e;">
         <h2 style="color:#c9a96e;margin-top:0;">🏠 New Lead - Sobha One World (sobha-theoneworld.com)</h2>
         <table style="width:100%;border-collapse:collapse;color:#eee;">
