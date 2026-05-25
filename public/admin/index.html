@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Dashboard | Sobha One World Admin</title>
+  <link rel="icon" href="../images/logo-transparent.png">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Sobha One World <span>Admin</span></h1>
+    <div class="admin-actions">
+      <button class="admin-btn admin-btn-gold" onclick="exportCSV()">⬇ Download Leads</button>
+      <button class="admin-btn admin-btn-outline" onclick="loadLeads()">↻ Refresh</button>
+      <button class="admin-btn admin-btn-danger" id="bulkDeleteBtn" onclick="deleteSelectedLeads()" style="display:none;">🗑 Delete Selected</button>
+      <button class="admin-btn admin-btn-outline" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="val" id="totalLeads">0</div><div class="lbl">Total Leads</div></div>
+      <div class="stat-card"><div class="val" id="todayLeads">0</div><div class="lbl">Today</div></div>
+      <div class="stat-card"><div class="val" id="weekLeads">0</div><div class="lbl">This Week</div></div>
+      <div class="stat-card"><div class="val" id="vpnBlocked">0</div><div class="lbl">VPN Blocked</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('leads', this)">📋 Leads</div>
+      <div class="tab" onclick="switchTab('smtp', this)">📧 SMTP Settings</div>
+    </div>
+
+    <!-- LEADS TAB -->
+    <div class="tab-content active" id="tab-leads">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h2>All Leads</h2>
+          <input type="text" class="table-search" placeholder="🔍 Search leads..." oninput="searchLeads(this.value)">
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+                <th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Device</th>
+                <th>Browser</th><th>City</th><th>Country</th><th>IP Address</th><th>Referrer</th>
+                <th>Date</th><th>VPN</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="leadsBody"></tbody>
+          </table>
+        </div>
+        <div class="no-data" id="noData" style="display:none;">No leads found.</div>
+      </div>
+    </div>
+
+    <!-- SMTP TAB -->
+    <div class="tab-content" id="tab-smtp">
+      <div class="smtp-panel">
+        <h2>📧 Email Notification Settings</h2>
+        <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">Configure SMTP to receive email alerts for new leads.</p>
+        <div class="smtp-grid">
+          <div class="fg"><label>SMTP Host</label><input type="text" id="smtpHost" placeholder="smtp.gmail.com"></div>
+          <div class="fg"><label>SMTP Port</label><input type="text" id="smtpPort" placeholder="587"></div>
+          <div class="fg"><label>Secure (TLS)</label><select id="smtpSecure" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.95rem;"><option value="false">No (STARTTLS)</option><option value="true">Yes (SSL/TLS)</option></select></div>
+          <div class="fg"><label>Username / Email</label><input type="text" id="smtpUser" placeholder="your@email.com"></div>
+          <div class="fg"><label>Password / App Password</label><input type="password" id="smtpPass" placeholder="••••••••"></div>
+          <div class="fg"><label>From Address</label><input type="text" id="smtpFrom" placeholder="noreply@yourdomain.com"></div>
+          <div class="fg"><label>Send Notifications To</label><input type="text" id="smtpTo" placeholder="admin@yourdomain.com"></div>
+        </div>
+        <div class="smtp-actions">
+          <button class="admin-btn admin-btn-gold" onclick="saveSMTP()">Save Settings</button>
+          <button class="admin-btn admin-btn-outline" onclick="testSMTP()">Send Test Email</button>
+        </div>
+        <p class="smtp-msg" id="smtpMsg"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Admin Login | Sobha One World</title>
+  <link rel="icon" href="../images/logo.png">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <img src="../images/logo-transparent.png" alt="Logo" class="login-logo">
+      <h1>Admin Panel</h1>
+      <p>Enter your credentials to manage leads.</p>
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="fg"><label>Username</label><input type="text" id="username" required placeholder="admin"></div>
+        <div class="fg"><label>Password</label><input type="password" id="password" required placeholder="••••••••"></div>
+        <button type="submit" class="btn-login">Sign In</button>
+        <p class="err" id="loginErr"></p>
+      </form>
+    </div>
+  </div>
+  <script>
+    if(localStorage.getItem('sobha_admin_token')) window.location.href='index.html';
+    async function handleLogin(e){
+      e.preventDefault();
+      const u=document.getElementById('username').value, p=document.getElementById('password').value;
+      try{
+        const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+        const d=await r.json();
+        if(d.success){localStorage.setItem('sobha_admin_token',d.token);window.location.href='index.html';}
+        else document.getElementById('loginErr').textContent=d.message||'Invalid credentials';
+      }catch(e){document.getElementById('loginErr').textContent='Connection error';}
+      return false;
+    }
+  </script>
+</body>
+</html>
