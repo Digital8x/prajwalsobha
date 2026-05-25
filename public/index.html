@@ -51,35 +51,49 @@
   }
   </script>
 
-  <link rel="icon" href="images/logo.png">
+  <link rel="icon" href="images/logo-transparent.png">
+  <link rel="preload" as="image" href="images/hero.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <!-- ===== PRELOADER ===== -->
-  <div id="preloader" style="position: fixed; inset: 0; background: #08090d; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.5s ease, visibility 0.5s ease;">
+  <div id="preloader" style="position: fixed; inset: 0; background: #08090d; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.6s ease;">
     <div style="text-align: center;">
-      <img src="images/logo.png" alt="Sobha" style="width: 100px; height: auto; animation: pulseLogo 1.5s infinite ease-in-out;">
-      <h3 style="color: #c9a96e; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 15px;">Sobha One World</h3>
+      <img src="images/logo-transparent.png" alt="Sobha" style="width: 120px; height: auto; animation: pulseLogo 1.5s infinite ease-in-out;">
+      <h3 style="color: #c9a96e; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 20px;">Sobha One World</h3>
     </div>
   </div>
   <style>
     @keyframes pulseLogo {
-      0% { transform: scale(0.95); opacity: 0.5; }
-      50% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.5; }
+      0% { transform: scale(0.92); opacity: 0.4; }
+      50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 8px rgba(201, 169, 110, 0.4)); }
+      100% { transform: scale(0.92); opacity: 0.4; }
     }
   </style>
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('preloader');
-        if (loader) {
-          loader.style.opacity = '0';
-          loader.style.visibility = 'hidden';
-          setTimeout(() => loader.remove(), 500);
-        }
-      }, 1000); // 1-second delay
-    });
+    (function() {
+      const startTime = Date.now();
+      function hideLoader() {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(1200 - elapsed, 0); // Guarantee minimum 1.2s pulse
+        setTimeout(() => {
+          const loader = document.getElementById('preloader');
+          if (loader) {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            setTimeout(() => loader.remove(), 600);
+          }
+        }, remaining);
+      }
+      // Hide loader when page is completely loaded (including hero image)
+      if (document.readyState === 'complete') {
+        hideLoader();
+      } else {
+        window.addEventListener('load', hideLoader);
+        // Fallback: hide loader anyway after 4 seconds if connection is slow
+        setTimeout(hideLoader, 4000);
+      }
+    })();
   </script>
 
   <!-- ===== NAVBAR ===== -->
